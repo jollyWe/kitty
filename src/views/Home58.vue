@@ -78,7 +78,9 @@
         </el-aside>
       </el-scrollbar>
       <el-main class="home_main">
-        <tab-view />
+        <!-- <tab-view /> -->
+        <!-- 标签组件 -->
+        <tabs></tabs>
       </el-main>
     </el-container>
   </el-container>
@@ -87,21 +89,28 @@
 <script>
 // @ is an alias to /src
 import { mapActions } from "vuex";
-import TabView from "../components/TabView.vue";
+// import TabView from "../components/TabView.vue";
 import menus from "./menuconfig";
 import HeaderBar from "../components/HeaderBar/index";
+
+import Tabs from "@/components/common/Tags.vue"; // 引入Tags组件
+import bus from "@/components/common/bus.js"; // 组件传值使用的bus
 export default {
   name: "home",
   data: function() {
     return {
       isCollapse: false,
       mainboxH: 0,
-      menus: []
+      menus: [],
+      tagsList: []
     };
   },
   components: {
-    TabView,
-    HeaderBar
+    // TabView,
+    HeaderBar,
+    tabs: Tabs, // 注册tabs组件
+    // eslint-disable-next-line vue/no-unused-components
+    bus // 注册bus组件传值公共文件
   },
   created() {
     setTimeout(() => {
@@ -144,24 +153,24 @@ export default {
   height: 100%;
 }
 .el-header {
-  /* background-color: #409eff; */
+  background-color: #409eff;
   color: #333;
   line-height: 50px;
   height: 50px !important;
   padding: 0;
-  border-bottom: 1px solid #e7eaed;
 }
 .aside_box {
   height: 100%;
   background-color: #2e4050;
   color: #333;
 }
+
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   min-width: 180px; /* 左边导航宽度 */
   min-height: 100%;
 }
 .el-main {
-  background-color: #f0f2f5;
+  background-color: #fff;
   color: #333;
   height: 100%;
   padding: 0;
