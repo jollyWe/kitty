@@ -1,130 +1,115 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br />
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener"
-        >vue-cli documentation</a
-      >.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel"
-          target="_blank"
-          rel="noopener"
-          >babel</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router"
-          target="_blank"
-          rel="noopener"
-          >router</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex"
-          target="_blank"
-          rel="noopener"
-          >vuex</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint"
-          target="_blank"
-          rel="noopener"
-          >eslint</a
-        >
-      </li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li>
-        <a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a>
-      </li>
-      <li>
-        <a href="https://forum.vuejs.org" target="_blank" rel="noopener"
-          >Forum</a
-        >
-      </li>
-      <li>
-        <a href="https://chat.vuejs.org" target="_blank" rel="noopener"
-          >Community Chat</a
-        >
-      </li>
-      <li>
-        <a href="https://twitter.com/vuejs" target="_blank" rel="noopener"
-          >Twitter</a
-        >
-      </li>
-      <li>
-        <a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a>
-      </li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li>
-        <a href="https://router.vuejs.org" target="_blank" rel="noopener"
-          >vue-router</a
-        >
-      </li>
-      <li>
-        <a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-devtools#vue-devtools"
-          target="_blank"
-          rel="noopener"
-          >vue-devtools</a
-        >
-      </li>
-      <li>
-        <a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener"
-          >vue-loader</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-          rel="noopener"
-          >awesome-vue</a
-        >
-      </li>
-    </ul>
+  <div id="login_box">
+    <div class="form_box">
+      <el-form
+        :model="logindata"
+        status-icon
+        :rules="loginrules"
+        ref="loginForm"
+        label-width="66px"
+        class="login-ruleForm"
+      >
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model.number="logindata.userName"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="passWord">
+          <el-input
+            type="password"
+            v-model="logindata.passWord"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="记住我">
+          <el-switch v-model="logindata.rember"></el-switch>
+        </el-form-item>
+        <el-form-item class="submenu_btn_lo">
+          <el-button
+            class="submenu_btn"
+            type="primary"
+            @click="submitForm('loginForm')"
+            >登录</el-button
+          >
+          <!--<el-button @click="resetForm('loginForm')">重置</el-button>-->
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "HelloWorld",
-  props: {
-    msg: String
+  name: "login",
+  data() {
+    return {
+      logindata: {
+        username: "superadmin",
+        password: "666666",
+        rember: false
+      },
+      loginrules: {
+        userName: [
+          { required: true, message: "用户名不能为空" }
+          // { validator: validatePass, trigger: 'blur' }
+        ],
+        passWord: [
+          { required: true, message: "密码不能为空" } //,trigger: 'blur'
+        ]
+      }
+    };
+  },
+  methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.login();
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    async login() {
+      // console.log("09");
+      this.$api.requseLogin.login(this.logindata).then(res => {
+        if (res.data.success) {
+          this.$message.success("登录成功");
+          window.sessionStorage.setItem("token", res.data.token);
+          // this.$router.push("/home");
+        }
+        // console.log("ok");
+      });
+    }
   }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+<style lang="scss" scoped>
+#login_box {
+  height: 100%;
+  //   background: url("../assets/images/loginBG.png") no-repeat center;
+  background-size: cover;
+  .form_box {
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 400px;
+    top: 0;
+    height: 300px;
+    bottom: 0;
+    margin: auto;
+    .el-form {
+      padding: 30px 30px 20px;
+      border-radius: 10px;
+      width: 100%;
+      background-color: #fff;
+    }
+  }
+  .submenu_btn {
+    width: 90%;
+  }
 }
 </style>
