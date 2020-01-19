@@ -15,7 +15,7 @@
           </div>
           <!-- <i class="fa fa-align-justify"></i> -->
         </el-col>
-        <el-col :span="13">
+        <el-col :span="10">
           <div class="hearNavBar">
             <el-menu
               :default-active="activeIndex"
@@ -29,21 +29,38 @@
               <!-- <el-menu-item index="1">首页</el-menu-item>
               <el-menu-item index="2">消息中心</el-menu-item>
               <el-menu-item index="3">订单管理</el-menu-item> -->
+              <el-menu-item index="1">{{ $t("common.home") }}</el-menu-item>
+              <el-menu-item index="2">{{ $t("common.doc") }}</el-menu-item>
+              <el-menu-item index="3">{{
+                $t("common.msgCenter")
+              }}</el-menu-item>
             </el-menu>
-            
           </div>
         </el-col>
         <el-col :span="5" class="userinfo">
+          <el-dropdown @command="handleCommand">
+            <span class="el-dropdown-link lang-inner">
+              <span id="language">中文</span
+              ><i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="zh_cn:中文">中文</el-dropdown-item>
+              <el-dropdown-item command="en_us:English"
+                >English</el-dropdown-item
+              >
+            </el-dropdown-menu>
+          </el-dropdown>
+
           <el-dropdown trigger="hover">
             <span class="el-dropdown-link userinfo-inner"
               ><img :src="this.userAvatar" /> {{ username }}</span
             >
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>我的消息</el-dropdown-item>
-              <el-dropdown-item>设置</el-dropdown-item>
-              <el-dropdown-item divided @click.native="logout"
-                >退出登录</el-dropdown-item
-              >
+              <el-dropdown-item>{{ $t("common.myMsg") }}</el-dropdown-item>
+              <el-dropdown-item>{{ $t("common.config") }}</el-dropdown-item>
+              <el-dropdown-item divided @click.native="logout">{{
+                $t("common.logout")
+              }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -95,7 +112,6 @@
         </aside>
         <section class="content-container">
           <div class="grid-content bg-purple-light">
-
             <el-col :span="24" class="breadcrumb-container">
               <el-breadcrumb separator="/" class="breadcrumb-inner">
                 <el-breadcrumb-item
@@ -106,7 +122,6 @@
                 </el-breadcrumb-item>
               </el-breadcrumb>
             </el-col>
-            
 
             <el-col :span="24" class="content-wrapper">
               <transition name="fade" mode="out-in">
@@ -146,6 +161,14 @@ export default {
     },
     handleSelectHearNavBar(key, keyPath) {
       console.log(key, keyPath);
+    },
+    // 语言切换
+    handleCommand(command) {
+      let array = command.split(":");
+      let lang = array[0] === "" ? "zh_cn" : array[0];
+      let label = array[1];
+      document.getElementById("language").innerHTML = label;
+      this.$i18n.locale = lang;
     },
     //折叠导航栏
     collapse: function() {
@@ -194,9 +217,15 @@ export default {
       text-align: right;
       padding-right: 30px;
       float: right;
+      .lang-inner {
+        font-size: 15px;
+        cursor: pointer;
+        color: #fff;
+      }
       .userinfo-inner {
         font-size: 20px;
         cursor: pointer;
+        padding-left: 15px;
         color: #fff;
         img {
           width: 40px;
